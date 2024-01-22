@@ -1,0 +1,210 @@
+image: node:16
+
+options:
+  size: 2x
+  max-time: 10
+
+pipelines:
+  pull-requests:
+    "**":
+      - parallel:
+          - step:
+              name: Security Scan
+              script:
+                # Run a security scan for sensitive data.
+                # See more security tools at https://bitbucket.org/product/features/pipelines/integrations?&category=security
+                - pipe: atlassian/git-secrets-scan:1.2.1
+          - step:
+              name: Build and test
+              caches:
+                - node
+              script:
+                - npm install jest --save-dev
+                - npx jest --coverage --runInBand --forceExit
+          - step:
+              name: Lint and format
+              script:
+                - npm install --save-dev eslint prettier eslint-config-prettier eslint-plugin-prettier
+                - npx eslint . --fix
+                - npx prettier --write .
+
+  branches:
+    dev:
+      - step:
+          name: Bulid&Push ECR-BE-charts
+          caches:
+            - docker
+          services:
+            - docker
+          script:
+            # - pipe: jcountsnr/newrelic_observability_event:0.0.7
+            #   variables:
+            #     INGEST_KEY: "eu01xx6fe2308cc14cef117ec49a5e37405aNRAL"
+            #     EU-ENDPOINT: "true"
+
+            # build the image
+            - docker build -t $BITBUCKET_BRANCH-charts-repo .
+            # use the pipe to push the image to AWS ECR
+            - pipe: atlassian/aws-ecr-push-image:2.0.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                IMAGE_NAME: $BITBUCKET_BRANCH-charts-repo
+                TAGS: "latest"
+                # EXTRA_ARGS: '--exclude=infra/* --exclude=bitbucket-pipelines.yml'
+
+      - step:
+          name: Deploy to ECS-BE-charts
+          # trigger: manual
+          script:
+            # update ECS Task Definition
+            - pipe: atlassian/aws-ecs-deploy:1.7.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                CLUSTER_NAME: "${BITBUCKET_BRANCH}-be"
+                SERVICE_NAME: "${BITBUCKET_BRANCH}-charts"
+                #TASK_DEFINITION: 'task-definition.json' # uncomment to update task definitions
+                # ECS_TASK_FAMILY_NAME: 'dev-charts' # Optional
+                FORCE_NEW_DEPLOYMENT: "true"
+                WAIT: "true"
+                # EXTRA_ARGS: '--exclude=infrastructure/* --exclude=bitbucket-pipelines.yml'
+
+    stg:
+      - step:
+          name: Bulid&Push ECR-BE-charts
+          caches:
+            - docker
+          services:
+            - docker
+          script:
+            # - pipe: jcountsnr/newrelic_observability_event:0.0.7
+            #   variables:
+            #     INGEST_KEY: "eu01xx6fe2308cc14cef117ec49a5e37405aNRAL"
+            #     EU-ENDPOINT: "true"
+
+            # build the image
+            - docker build -t $BITBUCKET_BRANCH-charts-repo .
+            # use the pipe to push the image to AWS ECR
+            - pipe: atlassian/aws-ecr-push-image:2.0.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                IMAGE_NAME: $BITBUCKET_BRANCH-charts-repo
+                TAGS: "latest"
+                # EXTRA_ARGS: '--exclude=infra/* --exclude=bitbucket-pipelines.yml'
+
+      - step:
+          name: Deploy to ECS-BE-charts
+          # trigger: manual
+          script:
+            # update ECS Task Definition
+            - pipe: atlassian/aws-ecs-deploy:1.7.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                CLUSTER_NAME: "${BITBUCKET_BRANCH}-be"
+                SERVICE_NAME: "${BITBUCKET_BRANCH}-charts"
+                #TASK_DEFINITION: 'task-definition.json' # uncomment to update task definitions
+                # ECS_TASK_FAMILY_NAME: 'dev-charts' # Optional
+                FORCE_NEW_DEPLOYMENT: "true"
+                WAIT: "true"
+                # EXTRA_ARGS: '--exclude=infrastructure/* --exclude=bitbucket-pipelines.yml'
+    master:
+      - step:
+          name: Bulid&Push ECR-BE-charts
+          caches:
+            - docker
+          services:
+            - docker
+          script:
+            # - pipe: jcountsnr/newrelic_observability_event:0.0.7
+            #   variables:
+            #     INGEST_KEY: "eu01xx6fe2308cc14cef117ec49a5e37405aNRAL"
+            #     EU-ENDPOINT: "true"
+
+            # build the image
+            - export BITBUCKET_BRANCH="prod"
+            - docker build -t $BITBUCKET_BRANCH-charts-repo .
+            # use the pipe to push the image to AWS ECR
+            - pipe: atlassian/aws-ecr-push-image:2.0.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                IMAGE_NAME: $BITBUCKET_BRANCH-charts-repo
+                TAGS: "latest"
+                # EXTRA_ARGS: '--exclude=infra/* --exclude=bitbucket-pipelines.yml'
+
+      - step:
+          name: Deploy to ECS-BE-charts
+          # trigger: manual
+          script:
+            # update ECS Task Definition
+            - export BITBUCKET_BRANCH="prod"
+            - pipe: atlassian/aws-ecs-deploy:1.7.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                CLUSTER_NAME: "${BITBUCKET_BRANCH}-be"
+                SERVICE_NAME: "${BITBUCKET_BRANCH}-charts"
+                #TASK_DEFINITION: 'task-definition.json' # uncomment to update task definitions
+                # ECS_TASK_FAMILY_NAME: 'dev-charts' # Optional
+                FORCE_NEW_DEPLOYMENT: "true"
+                WAIT: "true"
+                # EXTRA_ARGS: '--exclude=infrastructure/* --exclude=bitbucket-pipelines.yml'
+
+    hotfix:
+      - step:
+          name: Bulid&Push ECR-BE-charts
+          caches:
+            - docker
+          services:
+            - docker
+          script:
+            # - pipe: jcountsnr/newrelic_observability_event:0.0.7
+            #   variables:
+            #     INGEST_KEY: "eu01xx6fe2308cc14cef117ec49a5e37405aNRAL"
+            #     EU-ENDPOINT: "true"
+
+            # build the image
+            - export BITBUCKET_BRANCH="prod"
+            - docker build -t $BITBUCKET_BRANCH-charts-repo .
+            # use the pipe to push the image to AWS ECR
+            - pipe: atlassian/aws-ecr-push-image:2.0.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                IMAGE_NAME: $BITBUCKET_BRANCH-charts-repo
+                TAGS: "latest"
+                # EXTRA_ARGS: '--exclude=infra/* --exclude=bitbucket-pipelines.yml'
+
+      - step:
+          name: Deploy to ECS-BE-charts
+          # trigger: manual
+          script:
+            # update ECS Task Definition
+            - export BITBUCKET_BRANCH="prod"
+            - pipe: atlassian/aws-ecs-deploy:1.7.0
+              variables:
+                AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID
+                AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY
+                AWS_DEFAULT_REGION: $AWS_DEFAULT_REGION
+                CLUSTER_NAME: "${BITBUCKET_BRANCH}-be"
+                SERVICE_NAME: "${BITBUCKET_BRANCH}-charts"
+                #TASK_DEFINITION: 'task-definition.json' # uncomment to update task definitions
+                # ECS_TASK_FAMILY_NAME: 'dev-charts' # Optional
+                FORCE_NEW_DEPLOYMENT: "true"
+                WAIT: "true"
+                # EXTRA_ARGS: '--exclude=infrastructure/* --exclude=bitbucket-pipelines.yml'
+
+definitions:
+  services:
+    docker:
+      memory: 2048
