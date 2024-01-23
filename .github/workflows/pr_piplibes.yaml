@@ -1,0 +1,46 @@
+name: Pull Request Pipeline
+
+on:
+  pull_request:
+    branches:
+      - '**'
+
+defaults:
+  run:
+    shell: bash
+
+
+permissions:
+  contents: read
+  actions:  read
+  security-events: write
+
+
+jobs:
+
+  build_and_test:
+    runs-on: ubuntu-latest
+    container:
+      image: node:16
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Build and Test
+        run: |
+          npm install jest --save-dev
+          npx jest --coverage --runInBand --forceExit
+
+  lint_and_format:
+    runs-on: ubuntu-latest
+    container:
+      image: node:16
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Lint and Format
+        run: |
+          npm install --save-dev eslint prettier eslint-config-prettier eslint-plugin-prettier
+          # npx eslint .
+          # npx prettier . --check
