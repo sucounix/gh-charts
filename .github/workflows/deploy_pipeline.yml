@@ -225,13 +225,20 @@ jobs:
       #     image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
-        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+      #   with:
+      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
+      #     force-new-deployment: true
+      #     service: ${{ env.environment }}-charts
+      #     cluster: ${{ env.environment }}-be
+      #     wait-for-service-stability: true
+
+        uses: donaldpiret/ecs-deploy@master
         with:
-          task-definition: ${{ steps.task-def.outputs.task-definition }}
-          force-new-deployment: true
-          service: ${{ env.environment }}-charts
-          cluster: ${{ env.environment }}-be
-          wait-for-service-stability: true
+          cluster: ${{ env.environment }}-be 
+          target: ${{ env.environment }}-charts
+          tag: latest
+      
 
       # - run:  docker build -t $GH_BRANCH-charts-repo .
       # - name: Push to ECR
