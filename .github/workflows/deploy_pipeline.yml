@@ -169,11 +169,11 @@ jobs:
     #   images: ${{ steps.build-image.outputs.image }}
 
     steps:
-      - name: Set ENV for ${{ needs.prepare.outputs.branch_name }}
+      - name: Set environment for ${{ needs.prepare.outputs.branch_name }}
         run: |
-          echo "ENV=${{ needs.prepare.outputs.branch_name }}" >> $GITHUB_ENV
+          echo "environment=${{ needs.prepare.outputs.branch_name }}" >> $GITHUB_ENV
 
-      - name: Set ENV for PROD
+      - name: Set environment for PROD
         if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
         run: |
           echo "environment=prod" >> $GITHUB_ENV
@@ -205,7 +205,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: ${{ env.ENV }}-charts-repo
+          ECR_REPOSITORY: ${{ env.environment }}-charts-repo
           IMAGE_TAG: ${{ github.sha }}
         run: |
           echo "Building image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
@@ -227,7 +227,7 @@ jobs:
       - name: Download task definition
         run: |
           aws ecs describe-task-definition \
-          --task-definition ${ENV}-charts \
+          --task-definition $environment-charts \
           --query taskDefinition > task-definition.json
 
       - name: Fill in the new image ID in the Amazon ECS task definition
@@ -235,7 +235,7 @@ jobs:
         uses: aws-actions/amazon-ecs-render-task-definition@v1
         with:
           task-definition: task-definition.json
-          container-name: ${{ env.ENV }}-charts
+          container-name: ${ env.environment }-charts
           image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
@@ -243,8 +243,8 @@ jobs:
         with:
           task-definition: ${{ steps.task-def.outputs.task-definition }}
           force-new-deployment: true
-          service: ${{ env.ENV }}-charts
-          cluster: ${{ env.ENV }}-be
+          service: ${{ env.environment }}-charts
+          cluster: ${{ env.environment }}-be
           wait-for-service-stability: true
 
       # - run:  docker build -t $GH_BRANCH-charts-repo .
