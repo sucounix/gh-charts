@@ -235,7 +235,7 @@ jobs:
 
         uses: donaldpiret/ecs-deploy@master
         with:
-          cluster: ${{ env.environment }}-be 
+          cluster: ${{ env.environment }}-be
           target: ${{ env.environment }}-charts
           tag: latest
       
