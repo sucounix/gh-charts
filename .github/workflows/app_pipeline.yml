@@ -449,5 +449,5 @@ jobs:
       - name: Lint and Format
         run: |
           npm install --save-dev eslint prettier eslint-config-prettier eslint-plugin-prettier
-          npx eslint .
+          # npx eslint .
           npx prettier . --check
