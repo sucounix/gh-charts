@@ -435,10 +435,8 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v2
 
-      - name: Install dependencies for linting and formatting
-        run: npm install --save-dev eslint prettier eslint-config-prettier eslint-plugin-prettier
-
       - name: Lint and Format
         run: |
+          npm install --save-dev eslint prettier eslint-config-prettier eslint-plugin-prettier
           npx eslint . --fix
           npx prettier --write .
