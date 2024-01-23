@@ -412,6 +412,17 @@ on:
     branches:
       - '**'
 
+defaults:
+  run:
+    shell: bash
+    working-directory: 02-flask-app/
+
+permissions:
+  contents: read
+  actions:  read
+  security-events: write
+
+
 jobs:
 
   build_and_test:
@@ -438,5 +449,5 @@ jobs:
       - name: Lint and Format
         run: |
           npm install --save-dev eslint prettier eslint-config-prettier eslint-plugin-prettier
-          # npx eslint . --fix
-          npx prettier --write .
+          npx eslint .
+          npx prettier . --check
