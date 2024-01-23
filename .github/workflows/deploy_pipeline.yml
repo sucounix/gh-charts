@@ -237,7 +237,7 @@ jobs:
         with:
           cluster: ${{ env.environment }}-be
           target: ${{ env.environment }}-charts
-          tag: latest
+          # tag: latest
       
 
       # - run:  docker build -t $GH_BRANCH-charts-repo .
