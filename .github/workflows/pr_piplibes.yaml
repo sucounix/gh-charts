@@ -40,4 +40,4 @@ jobs:
         run: |
           npm install --save-dev eslint prettier eslint-config-prettier eslint-plugin-prettier
           # npx eslint .
-          # npx prettier . --check
+          npx prettier . --check
