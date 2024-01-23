@@ -24,7 +24,7 @@ const formatCurrency = (number, currencyCode) => {
         maximumFractionDigits: handleCurrencyPrecision(currencyCode),
         minimumFractionDigits: handleCurrencyPrecision(currencyCode),
         currencySign: "accounting",
-      }
+      },
     ).format(Math.abs(number))})`;
   return `${handleCurrencySymbol(currencyCode)} ${new Intl.NumberFormat(`en`, {
     maximumFractionDigits: handleCurrencyPrecision(currencyCode),

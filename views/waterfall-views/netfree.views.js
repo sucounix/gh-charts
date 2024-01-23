@@ -141,7 +141,7 @@ const renderNetFreeCashView = (waterfallRequest) => {
       }));
 
     const freeOfEquity = netFreeCashBlock?.find(
-      (entry) => entry.name === "Free Cash Flow To Equity"
+      (entry) => entry.name === "Free Cash Flow To Equity",
     );
 
     // Determine which blocks do exist
@@ -404,8 +404,8 @@ const renderNetFreeCashView = (waterfallRequest) => {
                   index === table.children.length - 1
                     ? "#1C7ED6"
                     : entry.value > 0
-                    ? "#37B24D"
-                    : "#E03131"
+                      ? "#37B24D"
+                      : "#E03131"
                 }
                 stroke-width="30"
             />
@@ -421,16 +421,16 @@ const renderNetFreeCashView = (waterfallRequest) => {
                 [0, "-"].includes(entry.value)
                   ? `${handleCurrencySymbol(waterfallRequest.currency)} 0.00`
                   : entry.value > 0
-                  ? formatCurrency(
-                      Math.abs(entry.value),
-                      waterfallRequest.currency
-                    )
-                  : "(" +
-                    formatCurrency(
-                      Math.abs(entry.value),
-                      waterfallRequest.currency
-                    ) +
-                    ")"
+                    ? formatCurrency(
+                        Math.abs(entry.value),
+                        waterfallRequest.currency,
+                      )
+                    : "(" +
+                      formatCurrency(
+                        Math.abs(entry.value),
+                        waterfallRequest.currency,
+                      ) +
+                      ")"
               }
             </text>
         `;

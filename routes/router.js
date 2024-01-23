@@ -23,7 +23,7 @@ router.post(
   "/trend-analysis",
   trendAnalysisSchemaValidator,
   trendAnalysisDataValidator,
-  getTrendAnalysis
+  getTrendAnalysis,
 );
 
 module.exports = router;

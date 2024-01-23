@@ -58,7 +58,7 @@ const renderUsesAndSourcesView = (waterfallRequest) => {
 
     const netChangeCashBalanceBlock = waterfallData.rows.find(
       (block) =>
-        block.row.rows[0].row[0]?.col_data === "Net Change in Cash Flow"
+        block.row.rows[0].row[0]?.col_data === "Net Change in Cash Flow",
     );
     if (netChangeCashBalanceBlock) {
       let current =
@@ -181,7 +181,7 @@ const renderUsesAndSourcesView = (waterfallRequest) => {
 
     let usesOfCashBlock = blocks.find(
       (block) =>
-        block.row.columns[0]?.col_data === "Uses Of Cash Flow (Spending)"
+        block.row.columns[0]?.col_data === "Uses Of Cash Flow (Spending)",
     );
 
     if (usesOfCashBlock)
@@ -193,7 +193,7 @@ const renderUsesAndSourcesView = (waterfallRequest) => {
 
     let sourcesOfCashBlock = blocks.find(
       (block) =>
-        block.row.columns[0]?.col_data === "Sources Of Cash Flow (Generation)"
+        block.row.columns[0]?.col_data === "Sources Of Cash Flow (Generation)",
     );
 
     if (sourcesOfCashBlock)
@@ -205,7 +205,7 @@ const renderUsesAndSourcesView = (waterfallRequest) => {
 
     const netChangeCashBalanceBlock = blocks.find(
       (block) =>
-        block.row.rows[0].row[0]?.col_data === "Net Change in Cash Flow"
+        block.row.rows[0].row[0]?.col_data === "Net Change in Cash Flow",
     );
 
     let totalsBlocks = [netChangeCashBalanceBlock];
@@ -272,10 +272,10 @@ const renderUsesAndSourcesView = (waterfallRequest) => {
 
       const beginCashBalanceBlock = blocks.find(
         (block) =>
-          block.row.rows[0].row[0]?.col_data === "Beginning Cash Balance"
+          block.row.rows[0].row[0]?.col_data === "Beginning Cash Balance",
       );
       const endCashBalanceBlock = blocks.find(
-        (block) => block.row.rows[0].row[0]?.col_data === "Ending Cash Balance"
+        (block) => block.row.rows[0].row[0]?.col_data === "Ending Cash Balance",
       );
 
       summaryData = {
@@ -417,8 +417,8 @@ const renderUsesAndSourcesView = (waterfallRequest) => {
                 entry.type === "total"
                   ? "#1C7ED6"
                   : entry.value > 0
-                  ? "#37B24D"
-                  : "#E03131"
+                    ? "#37B24D"
+                    : "#E03131"
               }
               stroke-width="30"
             />
@@ -434,16 +434,16 @@ const renderUsesAndSourcesView = (waterfallRequest) => {
                   [0, "-"].includes(entry.value)
                     ? `${handleCurrencySymbol(waterfallRequest.currency)} 0.00`
                     : entry.value > 0
-                    ? formatCurrency(
-                        Math.abs(entry.value),
-                        waterfallRequest.currency
-                      )
-                    : "(" +
-                      formatCurrency(
-                        Math.abs(entry.value),
-                        waterfallRequest.currency
-                      ) +
-                      ")"
+                      ? formatCurrency(
+                          Math.abs(entry.value),
+                          waterfallRequest.currency,
+                        )
+                      : "(" +
+                        formatCurrency(
+                          Math.abs(entry.value),
+                          waterfallRequest.currency,
+                        ) +
+                        ")"
                 }
             </text>
         `;

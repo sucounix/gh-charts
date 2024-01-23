@@ -17,14 +17,12 @@ on:
     #   - '02-flask-app/**'
     #   - '.github/workflows/app*.yml'
 
-
 defaults:
   run:
     shell: bash
 permissions: {}
 
 jobs:
-
   # prepare:
   #   runs-on: ubuntu-latest
   #   # outputs:
@@ -40,27 +38,25 @@ jobs:
   #       run: |
   #         echo "environment=prod" >> $GITHUB_ENV
 
-      # - name: Generate env variables
-      #   id: vars
-      #   run: |
+  # - name: Generate env variables
+  #   id: vars
+  #   run: |
 
-      #     if [ "${{ env.environment }}" == "prod" ]
-      #     then
-      #       topic_prefix=""
-      #     else
-      #       topic_prefix="${{ env.environment }}_"
-      #     fi
-      #     echo ::set-output name=topic_prefix::${topic_prefix}
+  #     if [ "${{ env.environment }}" == "prod" ]
+  #     then
+  #       topic_prefix=""
+  #     else
+  #       topic_prefix="${{ env.environment }}_"
+  #     fi
+  #     echo ::set-output name=topic_prefix::${topic_prefix}
 
-      # - name: Git Version
-      #   id: version
-      #   uses: codacy/git-version@2.5.3
-      #   with:
-      #     release-branch: main
-      #     dev-branch: dev
-      #     minor-identifier: feat(
-
-
+  # - name: Git Version
+  #   id: version
+  #   uses: codacy/git-version@2.5.3
+  #   with:
+  #     release-branch: main
+  #     dev-branch: dev
+  #     minor-identifier: feat(
 
   # code-quality:
   #   needs: prepare
@@ -187,11 +183,11 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ vars.AWS_REGION }}
-  
+
       - name: Login to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v1
-  
+
       - name: Build, tag, and push image to Amazon ECR
         id: build-image
         env:
@@ -225,20 +221,19 @@ jobs:
       #     image: ${{ steps.build-image.outputs.image }}
 
       - name: Deploy Amazon ECS task definition
-      #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
-      #   with:
-      #     task-definition: ${{ steps.task-def.outputs.task-definition }}
-      #     force-new-deployment: true
-      #     service: ${{ env.environment }}-charts
-      #     cluster: ${{ env.environment }}-be
-      #     wait-for-service-stability: true
+        #   uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        #   with:
+        #     task-definition: ${{ steps.task-def.outputs.task-definition }}
+        #     force-new-deployment: true
+        #     service: ${{ env.environment }}-charts
+        #     cluster: ${{ env.environment }}-be
+        #     wait-for-service-stability: true
 
         uses: donaldpiret/ecs-deploy@master
         with:
           cluster: ${{ env.environment }}-be
           target: ${{ env.environment }}-charts
           # tag: latest
-      
 
       # - run:  docker build -t $GH_BRANCH-charts-repo .
       # - name: Push to ECR
@@ -249,7 +244,6 @@ jobs:
       #     secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       #     region: ${{ vars.AWS_REGION }}
       #     image: $GH_BRANCH-charts-repo:latest
-
 
       # - name: Run sonar scan
       #   uses: sonarsource/sonarqube-scan-action@master
@@ -285,7 +279,6 @@ jobs:
       #     echo "ECR_REPOSITORY0=xpov-stg-nginx" >> $GITHUB_ENV
       #     echo "CONTAINER_NAME1=xpov-container-stg-falsk-app" >> $GITHUB_ENV
       #     echo "CONTAINER_NAME0=xpov-container-stg-nginx" >> $GITHUB_ENV
-
 
       # - name: Set up Prod environment
       #   if: ${{ (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'pull_request' && github.event.pull_request.base.ref == 'main' && github.event.action != 'closed') }}
@@ -344,7 +337,6 @@ jobs:
       #     docker push $ECR_REGISTRY/$ECR_REPOSITORY0:latest
       #     docker push $ECR_REGISTRY/$ECR_REPOSITORY1:$IMAGE_TAG
 
-
       # - name: Microsoft Teams Notification
       #   uses: skitionek/notify-microsoft-teams@master
       #   if: always()
@@ -377,21 +369,18 @@ jobs:
   #         release_branches: main
   #         custom_tag: ${{ needs.prepare.outputs.version }}
 
-      # - name: Generate changelog
-      #   id: Changelog
-      #   uses: metcalfc/changelog-generator@v1.0.0
-      #   with:
-      #     mytoken: ${{ secrets.GITHUB_TOKEN }}
+  # - name: Generate changelog
+  #   id: Changelog
+  #   uses: metcalfc/changelog-generator@v1.0.0
+  #   with:
+  #     mytoken: ${{ secrets.GITHUB_TOKEN }}
 
-
-      # - name: Create a GitHub release
-      #   uses: ncipollo/release-action@v1
-      #   with:
-      #     tag: ${{ steps.tag_version.outputs.new_tag }}
-      #     name: Release ${{ steps.tag_version.outputs.new_tag }}
-      #     body: ${{ steps.tag_version.outputs.changelog }}
-
-
+  # - name: Create a GitHub release
+  #   uses: ncipollo/release-action@v1
+  #   with:
+  #     tag: ${{ steps.tag_version.outputs.new_tag }}
+  #     name: Release ${{ steps.tag_version.outputs.new_tag }}
+  #     body: ${{ steps.tag_version.outputs.changelog }}
 
   # deploy:
 
@@ -421,7 +410,6 @@ jobs:
   #         echo "ECS_TASK_DEFINITION=xpovii-task-dev" >> $GITHUB_ENV
   #         echo "CONTAINER_NAME1=xpovii-container-dev-falsk-app" >> $GITHUB_ENV
   #         echo "CONTAINER_NAME0=xpovii-container-dev-nginx" >> $GITHUB_ENV
-
 
   #     - name: Set up stg environment
   #       if: endsWith(github.ref, '/stg')
@@ -468,7 +456,6 @@ jobs:
   #         container-name: ${{ env.CONTAINER_NAME1 }}
   #         image: ${{ needs.build.outputs.images }}
 
-
   #     - name: Deploy Amazon ECS task definition
   #       id: deploy-image
   #       uses: aws-actions/amazon-ecs-deploy-task-definition@v1
@@ -486,5 +473,3 @@ jobs:
   #     #     needs: ${{ toJson(needs) }}
   #     #     job: ${{ toJson(job) }}
   #     #     steps: ${{ toJson(steps) }}
-
-
