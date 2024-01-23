@@ -178,14 +178,14 @@ jobs:
         run: |
           echo "environment=prod" >> $GITHUB_ENV
 
-      - name: Maximize build space
-        uses: easimon/maximize-build-space@master
-        with:
-          root-reserve-mb: 46080
-          swap-size-mb: 1024
-          remove-dotnet: 'true'
-          remove-android: 'true'
-          remove-haskell: 'true'
+      # - name: Maximize build space
+      #   uses: easimon/maximize-build-space@master
+      #   with:
+      #     root-reserve-mb: 46080
+      #     swap-size-mb: 1024
+      #     remove-dotnet: 'true'
+      #     remove-android: 'true'
+      #     remove-haskell: 'true'
 
       - name: Checkout
         uses: actions/checkout@v3
@@ -219,6 +219,11 @@ jobs:
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
           echo "Pushed image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
+  deploy:
+    name: Build Image
+    needs: prepare
+    runs-on: ubuntu-latest
+    steps:
       - name: Download task definition
         run: |
           aws ecs describe-task-definition \
