@@ -220,8 +220,8 @@ jobs:
           echo "Pushed image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
   deploy:
-    name: Build Image
-    needs: prepare
+    name: deploy Image
+    needs: build
     runs-on: ubuntu-latest
     steps:
       - name: Download task definition
