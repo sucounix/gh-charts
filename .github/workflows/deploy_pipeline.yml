@@ -13,9 +13,9 @@ on:
       - "stg"
       - "main" #prod
       - "hotfix"
-    paths:
-      - '02-flask-app/**'
-      - '.github/workflows/app*.yml'
+    # paths:
+    #   - '02-flask-app/**'
+    #   - '.github/workflows/app*.yml'
 
 
 defaults:
