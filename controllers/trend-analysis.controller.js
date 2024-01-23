@@ -53,7 +53,7 @@ const getTrendAnalysis = async (req, res) => {
             return handleNumberFormat(
               Object.keys(currentChartYAxisUnitsType)[0],
               value,
-              requestData.currency
+              requestData.currency,
             );
           },
         },
@@ -74,7 +74,7 @@ const getTrendAnalysis = async (req, res) => {
               return handleNumberFormat(
                 Object.keys(currentChartYAxisUnitsType)[1],
                 value,
-                requestData.currency
+                requestData.currency,
               );
             },
           },
@@ -106,7 +106,7 @@ const getTrendAnalysis = async (req, res) => {
             chart_name: `${chart.chart_name} moving avg`,
             color: hex2rgba(chart.color, 0.5), // returns: rgba(175,8,123,0.5)
           },
-          movingAvgValues
+          movingAvgValues,
         );
       }
     });
@@ -160,7 +160,7 @@ const getTrendAnalysis = async (req, res) => {
             return handleNumberFormat(
               context.chart.config.data.datasets[context.datasetIndex].unitType,
               value,
-              requestData.currency
+              requestData.currency,
             );
           },
           labels: {

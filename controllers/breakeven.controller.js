@@ -89,7 +89,7 @@ const getBreakeven = async (req, res) => {
       font-size="12"
     >
       ${handleCurrencySymbol(currency)} ${humanReadableNumber(
-        topRevenue - (topRevenue / 10) * i
+        topRevenue - (topRevenue / 10) * i,
       )}
     </text>`;
     }
@@ -167,7 +167,7 @@ const getBreakeven = async (req, res) => {
       cx=${((svgWidth - labelsWidth) / 20) * i}
       cy=${YValueToPixels(
         breakeven_data.fixed_cost +
-          ((topTotalCost - breakeven_data.fixed_cost) / 20) * i
+          ((topTotalCost - breakeven_data.fixed_cost) / 20) * i,
       )}
       r="4"
       fill="#E03131"
@@ -322,7 +322,7 @@ const getBreakeven = async (req, res) => {
               <div style="font-size: 20px; font-weight: 500px;">
                 ${formatCurrency(
                   Math.round(breakeven_data.total_cost),
-                  currency
+                  currency,
                 )}
               </div>
             </div>
@@ -357,7 +357,7 @@ const getBreakeven = async (req, res) => {
               <div style="font-size: 20px; font-weight: 500px;">
                 ${formatCurrency(
                   Math.round(breakeven_data.fixed_cost),
-                  currency
+                  currency,
                 )}
               </div>
             </div>
@@ -382,7 +382,7 @@ const getBreakeven = async (req, res) => {
               <div style="font-size: 20px; font-weight: 500px;">
                 ${formatCurrency(
                   Math.round(breakeven_data.margin_of_safety),
-                  currency
+                  currency,
                 )}
               </div>
             </div>
@@ -444,7 +444,7 @@ const getBreakeven = async (req, res) => {
           */
             const newPoint = document.createElementNS(
               "http://www.w3.org/2000/svg",
-              "circle"
+              "circle",
             );
             newPoint.setAttribute("cx", point.x);
             newPoint.setAttribute("cy", point.y);

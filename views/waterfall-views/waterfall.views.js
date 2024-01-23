@@ -78,7 +78,7 @@ const renderWaterfallHTML = (waterfallRequest) => {
                 ? formatCurrency(value, waterfallRequest.currency)
                 : `(${formatCurrency(
                     Math.abs(value),
-                    waterfallRequest.currency
+                    waterfallRequest.currency,
                   )})`
             }
                 </span>
