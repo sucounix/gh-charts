@@ -1,0 +1,74 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: charts_svc_workflow
+
+on:
+  push:
+    branches:
+      main
+
+defaults:
+  run:
+    shell: bash
+permissions:
+  contents: write
+  actions: write
+  security-events: write
+
+jobs:
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      vpc: ${{ steps.changes.outputs.charts }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dorny/paths-filter@v3
+        id: changes
+        with:
+          base: main
+          filters: |
+            charts:
+              - 'charts'
+
+  svc_workflow:
+    needs:
+      - changes
+    name: charts_svc_workflow
+    if: ${{ needs.changes.outputs.charts == 'true' }}
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ vars.AWS_REGION }}
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ env.environment }}-charts-repo
+          IMAGE_TAG: ${{ github.sha }}
+        run: |
+          echo "Building image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          docker build \
+              -t $ECR_REPOSITORY:latest \
+              -t $ECR_REGISTRY/$ECR_REPOSITORY:latest \
+              -t $ECR_REPOSITORY:$IMAGE_TAG \
+              -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          docker tag $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:latest
+          echo "Pushed image $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
