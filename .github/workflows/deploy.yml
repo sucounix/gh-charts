@@ -9,6 +9,10 @@ on:
   push:
     branches:
       main
+    paths:
+      - 'charts/**'
+      - "!.github/workflows/**"
+
 
 defaults:
   run:
