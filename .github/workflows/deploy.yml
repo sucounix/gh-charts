@@ -31,7 +31,8 @@ jobs:
           base: main
           filters: |
             charts:
-              - '/charts'
+              - 'charts/**'
+
 
   svc_workflow:
     needs:
