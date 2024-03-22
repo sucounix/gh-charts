@@ -22,7 +22,7 @@ jobs:
   changes:
     runs-on: ubuntu-latest
     outputs:
-      vpc: ${{ steps.changes.outputs.charts }}
+      charts: ${{ steps.changes.outputs.charts }}
     steps:
       - uses: actions/checkout@v4
       - uses: dorny/paths-filter@v3
